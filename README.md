@@ -48,8 +48,51 @@ Python 3.x、PyTorch（CUDA 12.6）、RTX 3070 8GB、Windows
 
 ## 之後要做
 
-- [ ] `predict.py`：單張圖片推論，輸出前三名預測
+- [x] `predict.py`：單張圖片推論，輸出前三名預測
 - [ ] `evaluate.py`：混淆矩陣與錯誤案例分析
 - [ ] 對照實驗：凍結 vs 不凍結、有無資料增強
 - [ ] 換成自己熟悉的主題資料集
 - [ ] FastAPI + 前端 Demo
+
+## 預測（推論）
+
+訓練完成後，可以用 `predict.py` 對單張圖片做預測，輸出前三名與信心分數。
+
+```bash
+# 從 test 集隨機抽一張，並顯示正確答案
+python predict.py --random
+
+# 使用自己的圖片
+python predict.py --image path/to/flower.jpg
+```
+
+範例輸出：
+
+```
+正確答案: 花卉編號 81
+預測結果:
+  1. 花卉編號 81  信心 93.1%
+  2. 花卉編號 74  信心 0.3%
+  3. 花卉編號 46  信心 0.2%
+答對了
+```
+
+> 資料集的類別是花卉編號（1~102），不是花名。
+
+
+## 專案結構
+
+```
+image-classifier/
+├── train.py            # 訓練（兩階段微調、AMP、儲存最佳模型）
+├── predict.py          # 單張圖片推論，輸出 Top-3
+├── requirements.txt    # 套件清單
+├── assets/             # README 使用的圖片
+└── runs/exp1/          # 訓練輸出（best.pt、classes.json；不上傳）
+```
+
+## 限制
+
+- 只認得 Oxford Flowers 的 102 種花。輸入非花卉的圖片，模型仍會硬給出一個花的編號
+- 資料集類別是編號而非花名，結果對一般使用者不夠直觀
+- 只做了單次訓練，尚未比較不同模型與超參數
